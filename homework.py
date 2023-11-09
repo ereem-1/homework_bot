@@ -39,7 +39,7 @@ logger.addHandler(logging.StreamHandler())
 
 
 def check_tokens():
-    '''Проверка наличия токенов'''
+    """Проверка наличия токенов"""
     no_tokens_message = ('Отсутствует переменная окружения:')
     tokens_bool = True
     if PRACTICUM_TOKEN is None:
@@ -55,7 +55,7 @@ def check_tokens():
 
 
 def send_message(bot, message):
-    '''Отправка сообщения в Телеграм.'''
+    """Отправка сообщения в Телеграм."""
     try:
         logging.debug(f'Бот отправил сообщение {message}')
         bot.send_message(TELEGRAM_CHAT_ID, message)
@@ -67,7 +67,7 @@ def send_message(bot, message):
 
 
 def get_api_answer(current_timestamp):
-    '''Получение данных с API'''
+    """Получение данных с API"""
     current_timestamp = current_timestamp or int(time.time())
     params_request = {
         'url': ENDPOINT,
@@ -95,7 +95,7 @@ def get_api_answer(current_timestamp):
 
 
 def check_response(response):
-    '''Проверить валидность ответа.'''
+    """Проверка ответа API на корректность."""
     if not isinstance(response, dict):
         message = 'Ошибка в типе ответа API'
         logging.error(message)
@@ -113,7 +113,7 @@ def check_response(response):
 
 
 def parse_status(homework):
-    '''Анализ статуса на изменение'''
+    """Получение статуса работы"""
     if 'homework_name' not in homework:
         raise KeyError('В ответе отсутствует ключ')
     homework_name = homework.get('homework_name')
@@ -127,7 +127,7 @@ def parse_status(homework):
 
 
 def main():
-    '''Основная логика работы бота.'''
+    """Основная логика работы бота."""
     if not check_tokens():
         logging.critical('Отсутствуют токены!')
         exit()

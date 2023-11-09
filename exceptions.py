@@ -1,23 +1,23 @@
 class NotForSending(Exception):
-    '''Не для пересылки в телеграм.'''
+    """Не для пересылки в телеграм."""
     pass
 
 
 class InvalidResponseCode(Exception):
-    '''Не верный код ответа.'''
+    """Не верный код ответа."""
     pass
 
 
 class ConnectionError(Exception):
-    '''Не верный код ответа.'''
+    """Не верный код ответа."""
     pass
 
 
 class EmptyResponseFromAPI(NotForSending):
-    '''Пустой ответ от API.'''
+    """Пустой ответ от API."""
     pass
 
 
 class TelegramError(NotForSending):
-    '''Ошибка телеграма.'''
+    """Ошибка телеграма."""
     pass
