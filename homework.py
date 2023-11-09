@@ -39,7 +39,7 @@ logger.addHandler(logging.StreamHandler())
 
 
 def check_tokens():
-    """Проверка наличия токенов"""
+    """Проверка наличия токенов."""
     no_tokens_message = ('Отсутствует переменная окружения:')
     tokens_bool = True
     if PRACTICUM_TOKEN is None:
@@ -67,7 +67,7 @@ def send_message(bot, message):
 
 
 def get_api_answer(current_timestamp):
-    """Получение данных с API"""
+    """Получение данных с API."""
     current_timestamp = current_timestamp or int(time.time())
     params_request = {
         'url': ENDPOINT,
@@ -113,7 +113,7 @@ def check_response(response):
 
 
 def parse_status(homework):
-    """Получение статуса работы"""
+    """Получение статуса работы."""
     if 'homework_name' not in homework:
         raise KeyError('В ответе отсутствует ключ')
     homework_name = homework.get('homework_name')
