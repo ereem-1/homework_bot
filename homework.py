@@ -2,6 +2,7 @@ import logging
 import os
 import datetime
 import time
+
 import telegram
 import requests
 import exceptions
@@ -40,30 +41,32 @@ logger.addHandler(logging.StreamHandler())
 
 def check_tokens():
     """Проверка наличия токенов."""
-    no_tokens_message = ('Отсутствует переменная окружения:')
-    tokens_bool = True
+    no_tokens_message = 'Отсутствует переменная окружения:'
+    tokens = True
     if PRACTICUM_TOKEN is None:
-        tokens_bool = False
+        tokens = False
         logger.critical(f'{no_tokens_message} PRACTICUM_TOKEN')
     if TELEGRAM_TOKEN is None:
-        tokens_bool = False
+        tokens = False
         logger.critical(f'{no_tokens_message} TELEGRAM_TOKEN')
     if TELEGRAM_CHAT_ID is None:
-        tokens_bool = False
+        tokens = False
         logger.critical(f'{no_tokens_message} TELEGRAM_CHAT_ID')
-    return tokens_bool
+    return tokens
 
 
 def send_message(bot, message):
     """Отправка сообщения в Телеграм."""
     try:
-        logging.debug(f'Бот отправил сообщение {message}')
+        logger.debug(f'Бот отправил сообщение {message}')
         bot.send_message(TELEGRAM_CHAT_ID, message)
         logger.info(
             f'Сообщение в Telegram отправлено: {message}')
     except telegram.TelegramError as telegram_error:
         logger.error(
             f'Сообщение в Telegram не отправлено: {telegram_error}')
+    else:
+        logging.info('Статус отправлен в Telegram')
 
 
 def get_api_answer(current_timestamp):
@@ -80,6 +83,12 @@ def get_api_answer(current_timestamp):
             'headers = {headers},'
             'params = {params}'.format(**params_request))
         homework_statuses = requests.get(**params_request)
+    except requests.RequestException:
+        raise exceptions.ConnectionError(
+            'Не верный код ответа параметры запроса: url = {url},'
+            'headers = {headers},'
+            'params = {params}'.format(**params_request))
+    else:
         if homework_statuses.status_code != HTTPStatus.OK:
             raise exceptions.InvalidResponseCode(
                 'Не удалось получить ответ API, '
@@ -87,11 +96,6 @@ def get_api_answer(current_timestamp):
                 f'причина: {homework_statuses.reason}'
                 f'текст: {homework_statuses.text}')
         return homework_statuses.json()
-    except Exception:
-        raise exceptions.ConnectionError(
-            'Не верный код ответа параметры запроса: url = {url},'
-            'headers = {headers},'
-            'params = {params}'.format(**params_request))
 
 
 def check_response(response):
@@ -160,8 +164,6 @@ def main():
                 message = f'Ошибка в работе бота: {error}'
                 send_message(bot, message)
                 last_message = message
-        else:
-            last_message = ''
         finally:
             time.sleep(RETRY_PERIOD)
 
