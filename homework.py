@@ -2,14 +2,13 @@ import logging
 import os
 import datetime
 import time
-
-import telegram
-import requests
-import exceptions
-
 from http import HTTPStatus
 
+import requests
+import telegram
 from dotenv import load_dotenv
+
+import exceptions
 
 load_dotenv()
 
@@ -66,7 +65,7 @@ def send_message(bot, message):
         logger.error(
             f'Сообщение в Telegram не отправлено: {telegram_error}')
     else:
-        logging.info('Статус отправлен в Telegram')
+        logger.info('Статус отправлен в Telegram')
 
 
 def get_api_answer(current_timestamp):
@@ -78,7 +77,7 @@ def get_api_answer(current_timestamp):
         'params': {'from_date': current_timestamp},
     }
     try:
-        logging.info(
+        logger.info(
             'Начало запроса: url = {url},'
             'headers = {headers},'
             'params = {params}'.format(**params_request))
@@ -102,7 +101,7 @@ def check_response(response):
     """Проверка ответа API на корректность."""
     if not isinstance(response, dict):
         message = 'Ошибка в типе ответа API'
-        logging.error(message)
+        logger.error(message)
         raise TypeError(message)
     if 'homeworks' not in response:
         message = 'Пустой ответ от API'
@@ -163,7 +162,6 @@ def main():
             if last_message != message:
                 message = f'Ошибка в работе бота: {error}'
                 send_message(bot, message)
-                last_message = message
         finally:
             time.sleep(RETRY_PERIOD)
 
