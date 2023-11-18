@@ -64,6 +64,8 @@ def send_message(bot, message):
     except telegram.TelegramError as telegram_error:
         logger.error(
             f'Сообщение в Telegram не отправлено: {telegram_error}')
+        raise exceptions.SendMessageError(
+            f'Ошибка отправки сообщения: {telegram_error}')
     else:
         logger.info('Статус отправлен в Telegram')
 
@@ -149,9 +151,8 @@ def main():
             response = get_api_answer(timestamp)
             homeworks = check_response(response)
             if len(homeworks) == 0:
-                logging.debug('Домашних работ нет.')
+                logger.debug('Домашних работ нет.')
                 send_message(bot, 'Изменений нет')
-                break
             for homework in homeworks:
                 message = parse_status(homework)
                 if last_message != message:
@@ -159,9 +160,11 @@ def main():
                     last_message = message
             timestamp = response.get('current_date')
         except Exception as error:
+            message = f'Ошибка в работе бота: {error}'
+            logging.error(message)
             if last_message != message:
-                message = f'Ошибка в работе бота: {error}'
                 send_message(bot, message)
+                last_message = message
         finally:
             time.sleep(RETRY_PERIOD)
 
