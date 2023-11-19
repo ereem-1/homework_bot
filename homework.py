@@ -60,7 +60,7 @@ def send_message(bot, message):
         logger.debug(f'Бот отправил сообщение {message}')
         bot.send_message(TELEGRAM_CHAT_ID, message)
         logger.info(
-            f'Сообщение в Telegram отправлено: {message}')
+            f'Сообщение в Telegram отправлено: {message}', exc_info=True)
     except Exception as telegram_error:
         logger.error(
             f'Сообщение в Telegram не отправлено: {telegram_error}')
