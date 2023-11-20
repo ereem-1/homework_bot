@@ -105,12 +105,12 @@ def check_response(response):
         raise TypeError(message)
     if 'homeworks' not in response:
         message = 'Пустой ответ от API'
-        logging.error(message)
+        logger.error(message)
         raise exceptions.EmptyResponseFromAPI(message)
     homeworks = response.get('homeworks')
     if not isinstance(homeworks, list):
         message = 'Homeworks не является списком'
-        logging.error(message)
+        logger.error(message)
         raise TypeError(message)
     return homeworks
 
@@ -132,7 +132,7 @@ def parse_status(homework):
 def main():
     """Основная логика работы бота."""
     if not check_tokens():
-        logging.critical('Отсутствуют токены!')
+        logger.critical('Отсутствуют токены!')
         exit()
 
     bot = telegram.Bot(token=TELEGRAM_TOKEN)
@@ -159,9 +159,11 @@ def main():
             timestamp = response.get('current_date')
         except Exception as error:
             message = f'Ошибка в работе бота: {error}'
-            logging.error(message)
+            logger.error(message)
             if last_message != message:
                 send_message(bot, message)
+                logger.info(f'Бот отправил сообщение: "{message}"',
+                            exc_info=True)
                 last_message = message
         finally:
             time.sleep(RETRY_PERIOD)
