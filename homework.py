@@ -60,10 +60,12 @@ def send_message(bot, message):
         logger.debug(f'Бот отправил сообщение {message}')
         bot.send_message(TELEGRAM_CHAT_ID, message)
         logger.info(
-            f'Сообщение в Telegram отправлено: {message}', exc_info=True)
+            f'Сообщение в Telegram отправлено: {message}')
+        return True
     except Exception as telegram_error:
         logger.error(
             f'Сообщение в Telegram не отправлено: {telegram_error}')
+        return False
     else:
         logger.info('Статус отправлен в Telegram')
 
@@ -162,9 +164,10 @@ def main():
             logger.error(message)
             if last_message != message:
                 send_message(bot, message)
-                logger.info(f'Бот отправил сообщение: "{message}"',
-                            exc_info=True)
-                last_message = message
+                if send_message(bot, message) is True:
+                    last_message = message
+                else:
+                    last_message = ''
         finally:
             time.sleep(RETRY_PERIOD)
 
