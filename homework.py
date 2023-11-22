@@ -163,7 +163,6 @@ def main():
             message = f'Ошибка в работе бота: {error}'
             logger.error(message)
             if last_message != message:
-                send_message(bot, message)
                 if send_message(bot, message) is True:
                     last_message = message
                 else:
